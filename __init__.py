@@ -4,36 +4,25 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 TZ = ZoneInfo("Asia/Shanghai")
-WEEKDAYS = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"]
+
+# 最短注入阈值：消息字符数 < 此值时不注入时间
+_MIN_CHARS = 3
 
 
-def get_period(hour: int) -> str:
-    if hour < 6:
-        return "凌晨"
-    if hour < 8:
-        return "早上"
-    if hour < 12:
-        return "上午"
-    if hour < 14:
-        return "中午"
-    if hour < 18:
-        return "下午"
-    if hour < 20:
-        return "傍晚"
-    return "晚上"
+def inject_time(platform: str = "", user_message: str = "", **kwargs):
+    """Inject current time into short WeChat messages.
 
-
-def inject_time(platform: str = "", **kwargs):
-    """Inject current time into every WeChat message."""
+    Only injects when:
+    - platform is weixin
+    - user_message has >= _MIN_CHARS characters (skip reactions/typos)
+    """
     if platform != "weixin":
+        return None
+    if len(user_message.strip()) < _MIN_CHARS:
         return None
     try:
         now = datetime.now(TZ)
-        weekday = WEEKDAYS[now.weekday()]
-        period = get_period(now.hour)
-        short = f"{now.strftime('%H:%M')} {weekday} {period}"
-        full = now.strftime("%Y-%m-%d %H:%M:%S")
-        return {"context": f"[现在是 {short} | 精确时间: {full}]"}
+        return {"context": f"[当前时间: {now.strftime('%Y-%m-%d %H:%M:%S')}]"}
     except Exception:
         return None
 
