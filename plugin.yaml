@@ -1,5 +1,3 @@
 name: weixin-time
 description: 给微信消息注入当前时间（精简格式，>=3字才注入）
 version: 2.0.0
-provides_hooks:
-  - pre_llm_call

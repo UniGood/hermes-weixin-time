@@ -47,13 +47,13 @@
 
 ### 与其他 hook 共存
 
-与 active-message 插件的 hook 不冲突，会合并注入。active-message 先注册先调用，weixin-time 后注册后调用。
+与其他 `pre_llm_call` 插件的 hook 不冲突，会按注册顺序合并注入。
 
 LLM 看到的效果：
 ```
 用户消息
 
-[active-message 的 context]
+[其他插件的 context]
 [当前时间: 2026-06-10 14:30:25]
 ```
 
